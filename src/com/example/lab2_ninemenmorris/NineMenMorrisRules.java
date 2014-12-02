@@ -23,6 +23,10 @@ public class NineMenMorrisRules {
 	private int bluemarker, redmarker;
 	private int turn; // player in turn
 
+	public int getTurn() {
+		return turn;
+	}
+
 	public static final int BLUE_MOVES = 1;
 	public static final int RED_MOVES = 2;
 

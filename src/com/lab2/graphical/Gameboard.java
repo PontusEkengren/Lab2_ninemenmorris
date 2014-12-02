@@ -1,5 +1,6 @@
 package com.lab2.graphical;
 
+import com.example.lab2_ninemenmorris.NineMenMorrisRules;
 import com.example.lab2_ninemenmorris.R;
 import com.example.lab2_ninemenmorris.Unitinfo;
 
@@ -20,16 +21,6 @@ import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-/*
- 	Width = 454
-	To first box: 78           78/454=0,1718=17,18%
-	To second box: 148    148/454=0,3259=32,6%
-
-	Height = 451
-	To first box: 71			71/451=0,1574=15,74%
-	To second box: 142		142/451=0,3148=31,48%
- */
 
 public class Gameboard extends ActionBarActivity{
 
@@ -62,71 +53,114 @@ public class Gameboard extends ActionBarActivity{
         layout.setOnTouchListener(new OnTouchListener() {
            
             public boolean onTouch(View v, MotionEvent ev) {
+            	if(initDone==false){
+            		initializeGameBoard();
+            		unitInfo = new Unitinfo(xCords, yCords);
+            		initDone=true;
+            	}
                 switch(ev.getAction()){
                 case MotionEvent.ACTION_UP:
-                	if(initDone==false){
-                		initializeGameBoard();
-                		unitInfo = new Unitinfo(xCords, yCords);
-                		initDone=true;
-                	}
+                	
                 	checkIfValidPos=unitInfo.checkIfInBound(ev.getX(), ev.getY());
                 	if(checkIfValidPos!=-1){
-                		drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);	
+                		//drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);	
+                		
+                		
+                		if(play(converter(checkIfValidPos),0)==1){
+                			drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);
+                		}
+                		
                 		checkIfValidPos=-1;
                 	}else{
-                		Toast.makeText(getApplicationContext(), "You wong", Toast.LENGTH_SHORT);
+                		Toast.makeText(getApplicationContext(), "Not accurate enough...", Toast.LENGTH_SHORT).show();
+                		
                 	}
-                	
-                	
-                	//System.out.println("X: "+ev.getX()+" Y: "+ev.getY());
-                	//drawPiece.drawCircle(ev.getX(), ev.getY());
-                	
-                	//System.out.println("TopLeft corner: X"+gameBoard.getLeft()+" Y: "+gameBoard.getTop());
-                	
-                	
-            		
-                	
-                	/*
-                	int[] pos = new int[2];
-                	
-                    DisplayMetrics dm = getResources().getDisplayMetrics();
-                    
-                    
-                    float x1 = ev.getX()*(160f/dm.densityDpi);
-                    float y1 = ev.getY()*(160f/dm.densityDpi);
-                   
-                    
-                    System.out.println("TopLeft corner: X"+gameBoard.getLeft()+" Y: "+gameBoard.getTop());
-                    System.out.println("TopRight corner: X"+gameBoard.getRight()+" Y: "+gameBoard.getTop());
-                    System.out.println("BottomRight corner: X"+gameBoard.getLeft()+" Y: "+gameBoard.getBottom());
-                    System.out.println("BottomLeft corner: X"+gameBoard.getRight()+" Y: "+gameBoard.getBottom()+"\n\n\n");
-                    
-                    System.out.println("TopLeftSecRect corner: X"+gameBoard.getLeft()*3+" Y: "+gameBoard.getTop());
-                    
-                    System.out.println("the X CORD: "+(ev.getX()-gameBoard.getLeft())+"the Y CORD: "+(ev.getY()-gameBoard.getTop()));
-                    //System.out.println("LARGE RECT: Get left(): "+gameBoard.getLeft()+" getTop(): "+gameBoard.getTop()+" getRight(): "+gameBoard.getRight()+" getBottom(): "+gameBoard.getBottom());
-                    //System.out.println("SEC RECT: Get left(): "+(int)(gameBoard.getLeft()*1.17)+" getTop(): "+(int)(gameBoard.getTop()*1.55)+" getRight(): "+(int)(gameBoard.getRight()*0.775)+" getBottom(): "+(int)(gameBoard.getBottom()*0.4542));
-                   
-                    wholeGameboard=new Rect((int)(gameBoard.getLeft()*2.2),(int)(gameBoard.getTop()*2.2),(int)(gameBoard.getRight()*0.775), (int)(gameBoard.getBottom()*0.4542));
-                   
-                    //System.out.println("Touch event x: "+x1+ " y: "+y1);
-                    System.out.println("X CORDS: "+ev.getX()+"Y CORDS: "+ev.getY());
-                    //wholeGameboard=new Rect(gameBoard.getLeft(),gameBoard.getTop(), gameBoard.getRight(), gameBoard.getBottom());
-                   
-                   
-                   
-                    if(wholeGameboard.contains((int)ev.getX(), (int)ev.getY())){
-                            System.out.println("X CORDS: "+ev.getX()+"Y CORDS: "+ev.getY());
-                    }*/
                    
                     break;
-               
+                case MotionEvent.ACTION_DOWN:
+                	
+                	break;
                 }
+                
                     return true;
             }
+			
         });
         
     }
+    
+    public int play(int to, int from){
+    	NineMenMorrisRules nmm = new NineMenMorrisRules();
+    	
+    	int color= nmm.getTurn();
+    	if(nmm.legalMove(to, from, color))
+    		if(color==1){
+    			return 4;
+    		}else{
+    			return 5;
+    		}
+    	else 
+    		return -1;
+    	
+    	
+    }
+    
+    public int converter(int pos){
+    	switch (pos){
+    	case 0:
+    		return 3;
+    	case 1:
+    		return 6;
+    	case 2:
+    		return 9;
+    	case 3:
+    		return 2;
+    	case 4:
+    		return 5;
+    	case 5:
+    		return 8;
+    	case 6:
+    		return 1;
+    	case 7:
+    		return 4;
+    	case 8:
+    		return 7;
+    	case 9:
+    		return 24;
+    	case 10:
+    		return 23;
+    	case 11:
+    		return 22;
+    	case 12:
+    		return 10;
+    	case 13:
+    		return 11;
+    	case 14:
+    		return 12;
+    	case 15:
+    		return 19;
+    	case 16:
+    		return 16;
+    	case 17:
+    		return 13;
+    	case 18:
+    		return 20;
+    	case 19:
+    		return 17;
+    	case 20:
+    		return 14;
+    	case 21:
+    		return 21;
+    	case 22:
+    		return 18;
+    	case 23:
+    		return 15;
+    		default:
+    			return -1;
+    	}
+    	
+    }
+    
     public void initializeGameBoard(){
 	      //Rad0
         xCords[0]=0+gameBoard.getLeft();//gameBoard.getLeft()-gameBoard.getLeft();

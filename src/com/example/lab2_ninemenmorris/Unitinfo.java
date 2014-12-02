@@ -20,7 +20,7 @@ public class Unitinfo {
     	for(int i=0;i<24;i++){
     		System.out.println("create Hit boxes: "+i+" xCordsi: "+xCords[i]+" yCordsi: "+yCords[i]);
     		
-    		rectHitBoxes[i]=new Rect(xCords[i]-25,yCords[i]-25,xCords[i]+25,yCords[i]+25);
+    		rectHitBoxes[i]=new Rect(xCords[i]-35,yCords[i]-35,xCords[i]+35,yCords[i]+35);
     	}
     	
     }

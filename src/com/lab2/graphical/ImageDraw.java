@@ -48,8 +48,6 @@ public class ImageDraw extends View{
 	public void drawCircle(float x, float y){
 		this.x=x;
 		this.y=y;
-		
-		
 		this.invalidate();
 	}
 	
