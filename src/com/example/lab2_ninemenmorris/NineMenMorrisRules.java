@@ -23,6 +23,10 @@ public class NineMenMorrisRules {
 	private int bluemarker, redmarker;
 	private int turn; // player in turn
 
+	public void setTurn(int turn){
+		this.turn = turn;
+	}
+	
 	public int getTurn() {
 		return turn;
 	}

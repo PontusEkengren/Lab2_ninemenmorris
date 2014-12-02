@@ -1,5 +1,6 @@
 package com.lab2.graphical;
 
+import com.example.lab2_ninemenmorris.Gameplay;
 import com.example.lab2_ninemenmorris.NineMenMorrisRules;
 import com.example.lab2_ninemenmorris.R;
 import com.example.lab2_ninemenmorris.Unitinfo;
@@ -32,7 +33,7 @@ public class Gameboard extends ActionBarActivity{
     private int[] xCords=new int[25];
     private int[] yCords=new int[25];
     private boolean initDone=false;
-    private Unitinfo unitInfo;
+    private Gameplay gamePlay;
     private int checkIfValidPos=-1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,20 +56,21 @@ public class Gameboard extends ActionBarActivity{
             public boolean onTouch(View v, MotionEvent ev) {
             	if(initDone==false){
             		initializeGameBoard();
-            		unitInfo = new Unitinfo(xCords, yCords);
+            		gamePlay = new Gameplay(xCords, yCords);
             		initDone=true;
             	}
                 switch(ev.getAction()){
                 case MotionEvent.ACTION_UP:
                 	
-                	checkIfValidPos=unitInfo.checkIfInBound(ev.getX(), ev.getY());
+                	checkIfValidPos=gamePlay.checkIfInBound(ev.getX(), ev.getY());
                 	if(checkIfValidPos!=-1){
-                		//drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);	
+                		
+                		Paint paint = new Paint();
+                		paint.setColor(Color.BLUE);
+                		drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos],paint);	
                 		
                 		
-                		if(play(converter(checkIfValidPos),0)==1){
-                			drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);
-                		}
+            			//drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);
                 		
                 		checkIfValidPos=-1;
                 	}else{
@@ -89,77 +91,6 @@ public class Gameboard extends ActionBarActivity{
         
     }
     
-    public int play(int to, int from){
-    	NineMenMorrisRules nmm = new NineMenMorrisRules();
-    	
-    	int color= nmm.getTurn();
-    	if(nmm.legalMove(to, from, color))
-    		if(color==1){
-    			return 4;
-    		}else{
-    			return 5;
-    		}
-    	else 
-    		return -1;
-    	
-    	
-    }
-    
-    public int converter(int pos){
-    	switch (pos){
-    	case 0:
-    		return 3;
-    	case 1:
-    		return 6;
-    	case 2:
-    		return 9;
-    	case 3:
-    		return 2;
-    	case 4:
-    		return 5;
-    	case 5:
-    		return 8;
-    	case 6:
-    		return 1;
-    	case 7:
-    		return 4;
-    	case 8:
-    		return 7;
-    	case 9:
-    		return 24;
-    	case 10:
-    		return 23;
-    	case 11:
-    		return 22;
-    	case 12:
-    		return 10;
-    	case 13:
-    		return 11;
-    	case 14:
-    		return 12;
-    	case 15:
-    		return 19;
-    	case 16:
-    		return 16;
-    	case 17:
-    		return 13;
-    	case 18:
-    		return 20;
-    	case 19:
-    		return 17;
-    	case 20:
-    		return 14;
-    	case 21:
-    		return 21;
-    	case 22:
-    		return 18;
-    	case 23:
-    		return 15;
-    		default:
-    			return -1;
-    	}
-    	
-    }
     
     public void initializeGameBoard(){
 	      //Rad0

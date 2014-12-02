@@ -1,5 +1,7 @@
 package com.lab2.graphical;
 
+import java.util.ArrayList;
+
 import com.example.lab2_ninemenmorris.R;
 
 import android.content.Context;
@@ -15,43 +17,46 @@ import android.widget.ImageView;
 
 public class ImageDraw extends View{
 
-	private Drawable circle;
+	private Drawable redCircle,blueCircle;
 	public float x=0;
 	public float y=0;
     private int[] xCords=new int[25];
     private int[] yCords=new int[25];
+    ArrayList<Piece> pieces = new ArrayList<Piece>();
+    private Context context;
     
 	
 	public ImageDraw(Context context){
 		super(context);
-		
+		this.context=context;
 		Resources resources = context.getResources();
-		circle = (Drawable) resources.getDrawable(R.drawable.red);
+		redCircle = (Drawable) resources.getDrawable(R.drawable.red);
+		blueCircle = (Drawable) resources.getDrawable(R.drawable.green);
 
+		
+		
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas){
 		super.onDraw(canvas);
 
-		int iw = circle.getIntrinsicWidth();
-		int ih = circle.getIntrinsicHeight();
-		//Rect bounds = new Rect(x+0, y+0, (int)(x-iw), (int)(y-ih));
-		Paint paint = new Paint();
-		paint.setColor(Color.BLACK);
+		/*int iw = redCircle.getIntrinsicWidth();
+		int ih = redCircle.getIntrinsicHeight();
+		Rect bounds = new Rect(x+0, y+0, (int)(x-iw), (int)(y-ih));*/
 		
-		canvas.drawCircle(x, y, 30, paint);
-		
+		for(Piece piece: pieces){
+			canvas.drawCircle(piece.getX(), piece.getY(), 30, piece.getPaint());
+		}
+
 	}
 	
 	
-	public void drawCircle(float x, float y){
+	public void drawCircle(float x, float y, Paint paint){
 		this.x=x;
 		this.y=y;
+		pieces.add(new Piece((int)x, (int)y, paint));
 		this.invalidate();
 	}
-	
-	
-	
-	
+
 }
