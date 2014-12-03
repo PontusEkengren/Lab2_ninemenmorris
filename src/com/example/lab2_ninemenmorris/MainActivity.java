@@ -4,19 +4,44 @@ import com.lab2.graphical.Gameboard;
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
 
+	private SharedPreferences myPreferences;
+	private static final String filename = "savedGameSession";
+	private static final String PREFERENCES_NAME="SaveFile";
+	private static final String IS_SAVED="FileSaved";
+	private TextView txtSavedGame=null;
+	private Button btnStartGame=null;
+	private Button btnResetSavedGame=null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Button btnStartGame = (Button) findViewById(R.id.btnStartGame);
+		btnStartGame = (Button) findViewById(R.id.btnStartGame);
+		txtSavedGame = (TextView) findViewById(R.id.txtSavedGame);
+		btnResetSavedGame = (Button) findViewById(R.id.btnResetSavedGame);
+		
+		myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+		
+		final boolean isSaved = myPreferences.getBoolean(IS_SAVED, false);
+		
+		if(isSaved){
+			btnStartGame.setText("Resume game");
+			txtSavedGame.setText("Game in progress");
+			btnResetSavedGame.setVisibility(View.VISIBLE);
+		}else{
+			btnStartGame.setText("Start game");
+			txtSavedGame.setText("");
+		}
 		
 	}
 	
@@ -27,7 +52,14 @@ public class MainActivity extends ActionBarActivity {
 			i=new Intent(this,Gameboard.class);
 			startActivityForResult(i,1);
 			break;
-		
+		case R.id.btnResetSavedGame:
+			SharedPreferences.Editor editor=myPreferences.edit();
+			editor.putBoolean(IS_SAVED, false);
+			editor.commit();
+			btnResetSavedGame.setVisibility(View.INVISIBLE);
+			btnStartGame.setText("Start Game");
+			txtSavedGame.setText("");
+			break;
 		}
 		
 	}

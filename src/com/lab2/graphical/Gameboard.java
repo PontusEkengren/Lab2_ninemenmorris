@@ -1,5 +1,11 @@
 package com.lab2.graphical;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.example.lab2_ninemenmorris.GameboardInfo;
@@ -12,6 +18,7 @@ import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -19,6 +26,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -32,6 +40,9 @@ import android.widget.Toast;
 
 public class Gameboard extends ActionBarActivity{
 
+	private static final String filename = "savedGameSession";
+	private static final String PREFERENCES_NAME="SaveFile";
+	private static final String IS_SAVED="FileSaved";
 	private ImageDraw drawPiece;
     private ImageView gameBoard;
     private TextView tvPlayersTurn;
@@ -42,6 +53,8 @@ public class Gameboard extends ActionBarActivity{
     private int checkIfValidPos=-1;
     private GameboardInfo gbInfo=null;
     private ArrayList<Piece> pieces = null;
+    private FileWriter fileWriter= null;
+    private SharedPreferences myPreferences;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +63,35 @@ public class Gameboard extends ActionBarActivity{
         
         gameBoard = (ImageView) findViewById(R.id.imgGameboard);
         tvPlayersTurn = (TextView) findViewById(R.id.txtViewPTurn);
+        
+        myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        
+        final boolean isSaved = myPreferences.getBoolean(IS_SAVED, false);
+        
+        if(isSaved){
+        	gbInfo = new GameboardInfo();
+        	InputStream inputStream=null;
+        	InputStreamReader streamReader=null;
+        	BufferedReader bufferedReader=null;
+        	StringBuffer storedString = new StringBuffer();
+        	String[] arrayFromFile=null;
+        	
+        	try {
+				inputStream=openFileInput(filename);
+				streamReader = new InputStreamReader(inputStream);
+	            String strLine = null;
+	            bufferedReader=new BufferedReader(streamReader);
+	            if ((strLine = bufferedReader.readLine()) != null) {
+	                storedString.append(strLine);
+	                arrayFromFile=strLine.split(",");
+	            }
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				Toast.makeText(this, "Can not read from file, try again later or start a new game", Toast.LENGTH_SHORT).show();
+			}
+            
+        }
+        
         
         final RelativeLayout layout = (RelativeLayout) findViewById(R.id.relaLayout);
         
@@ -76,8 +118,10 @@ public class Gameboard extends ActionBarActivity{
                 	checkIfValidPos=gamePlay.checkIfInBound(ev.getX(), ev.getY());
                 	
                 	if(checkIfValidPos!=-1){
+                		if(isSaved){
+                			gbInfo = gamePlay.getGbInfo();
+                		}
                 		
-                		gbInfo = gamePlay.getGbInfo();
                 		
                 		
                 		//gbInfo.getPiecesPos();
@@ -152,6 +196,33 @@ public class Gameboard extends ActionBarActivity{
 			
         });
         
+    }
+    @Override
+    public void onPause(){
+    	super.onPause();
+    	save();
+    	SharedPreferences.Editor editor=myPreferences.edit();
+		editor.putBoolean(IS_SAVED, true);
+		editor.commit();
+    }
+    
+    private void save(){
+    	String data="";
+    	
+    	for(int i=1;i<25;i++){
+    		data+=gbInfo.getPiecesPos()[i]+",";
+    	}
+    	data+="\n";
+    	data+=gbInfo.getPlayerTurn();
+    	
+        try {
+        	fileWriter = new FileWriter(new File(getApplication().getFilesDir(),filename));
+        	fileWriter.write(data);
+            fileWriter.close();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
     

@@ -9,7 +9,7 @@
     tools:context="com.example.lab2_ninemenmorris.MainActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/txtSavedGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
@@ -18,10 +18,20 @@
         android:id="@+id/btnStartGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
+        android:layout_below="@+id/txtSavedGame"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="144dp"
         android:onClick="startGame"
-        android:text="Start game" />
+        android:text="" />
+
+    <Button
+        android:id="@+id/btnResetSavedGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnStartGame"
+        android:layout_centerVertical="true"
+        android:text="Reset"
+        android:onClick="startGame"
+        android:visibility="invisible" />
 
 </RelativeLayout>

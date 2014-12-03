@@ -20,8 +20,10 @@ public class Gameplay {
     	this.xCords = xCords;
     	this.yCords = yCords;
     	rectHitBoxes = new Rect[25];
-    	nmm=new NineMenMorrisRules();
     	gbInfo=new GameboardInfo();
+    	//if saved game gbInfo.init to nmm;
+    	nmm=new NineMenMorrisRules();
+    	
     	createHitBoxes();
     	
     }

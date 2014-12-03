@@ -12,8 +12,17 @@ public class GameboardInfo {
 	private int gameStatus;
 	private int[] piecesPosNMM=new int[25];
 	private int messageInfo=-1;
+	private NineMenMorrisRules nmm =null;
+	
 	
 	public GameboardInfo(){}
+	
+	public NineMenMorrisRules initNmm(){
+		nmm = new NineMenMorrisRules();
+		nmm.setGameplan(piecesPosNMM);
+		nmm.setTurn(playerTurn);
+		return nmm;
+	}
 
 	public int[] getPiecesPos() {
 		
