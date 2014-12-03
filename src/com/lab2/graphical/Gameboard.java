@@ -4,10 +4,14 @@ import java.util.ArrayList;
 
 import com.example.lab2_ninemenmorris.GameboardInfo;
 import com.example.lab2_ninemenmorris.Gameplay;
+import com.example.lab2_ninemenmorris.MainActivity;
 import com.example.lab2_ninemenmorris.NineMenMorrisRules;
 import com.example.lab2_ninemenmorris.R;
 
 import android.app.ActionBar.LayoutParams;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,24 +27,20 @@ import android.view.View.OnTouchListener;
 import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Gameboard extends ActionBarActivity{
 
 	private ImageDraw drawPiece;
-    private Rect wholeGameboard;
-    private int widthSecRect=0;
-    private int heightSecRect=0;
     private ImageView gameBoard;
+    private TextView tvPlayersTurn;
     private int[] xCords=new int[25];
     private int[] yCords=new int[25];
     private boolean initDone=false;
     private Gameplay gamePlay;
     private int checkIfValidPos=-1;
     private GameboardInfo gbInfo=null;
-    private int[] xCordsToDraw=new int[25];
-    private int[] yCordsToDraw=new int[25];
-    private Paint[] paintToDraw=new Paint[25];
     private ArrayList<Piece> pieces = null;
     
     @Override
@@ -49,10 +49,11 @@ public class Gameboard extends ActionBarActivity{
         setContentView(R.layout.gameboard);
         
         gameBoard = (ImageView) findViewById(R.id.imgGameboard);
-        
+        tvPlayersTurn = (TextView) findViewById(R.id.txtViewPTurn);
         
         final RelativeLayout layout = (RelativeLayout) findViewById(R.id.relaLayout);
         
+        tvPlayersTurn.setText("RED PLAYER TURN");
         
         drawPiece = new ImageDraw(getApplicationContext());
         layout.addView(drawPiece);
@@ -99,7 +100,36 @@ public class Gameboard extends ActionBarActivity{
                 		
                 		
                 		
-                		drawPiece.drawCircle(pieces);	
+                		drawPiece.drawCircle(pieces);
+                		
+                		if(gbInfo.getMessageInfo().contains("Congratulations")){
+                			Toast.makeText(getApplicationContext(), gbInfo.getMessageInfo(), Toast.LENGTH_SHORT).show();
+                			new AlertDialog.Builder(Gameboard.this)
+        		            .setTitle("Congratulations")
+        		            .setMessage(gbInfo.getMessageInfo()+" Do you want to restart or cancel?")
+        		            .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
+        		                public void onClick(DialogInterface dialog, int which) { 
+        		                	Intent i = new Intent(getApplicationContext(),Gameboard.class);
+        		                	finish();
+        		                	startActivity(i);
+        		                }
+        		             })
+        		            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        		                public void onClick(DialogInterface dialog, int which) { 
+        		                	finish();
+        		                	finishActivity(1);
+        		                }
+        		             }).show();
+                		}else if(!gbInfo.getMessageInfo().equalsIgnoreCase("-1")){
+                			Toast.makeText(getApplicationContext(), gbInfo.getMessageInfo(), Toast.LENGTH_SHORT).show();
+                		}
+                		if(gbInfo.getPlayerTurn() == 1){
+                			tvPlayersTurn.setText("BLUE PLAYER TURN");
+                		}else{
+                			tvPlayersTurn.setText("RED PLAYER TURN");
+                		}
+                		
+                		
                 		//pieces.removeAll(pieces);
                 		//redraw from gamebord info
                 		

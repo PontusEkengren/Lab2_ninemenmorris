@@ -49,8 +49,8 @@ public class NineMenMorrisRules {
 
 	public NineMenMorrisRules() {
 		gameplan = new int[25]; // zeroes
-		bluemarker = 9;
-		redmarker = 9;
+		bluemarker = 4;
+		redmarker = 4;
 		turn = RED_MOVES;
 	}
 
@@ -207,9 +207,17 @@ public class NineMenMorrisRules {
 	 */
 	public boolean win(int color) {
 		int countMarker = 0;
-		int count = 0;
-		while (count < 23) {
-			if (gameplan[count] != EMPTY_SPACE && gameplan[count] != color)
+		int count = 1;
+		int countColor=0;
+		
+		if(color == 1){
+			countColor=4;
+		}else{
+			countColor=5;
+		}
+		
+		while (count < 25) {
+			if (gameplan[count] != EMPTY_SPACE && gameplan[count] == countColor)
 				countMarker++;
 			count++;
 		}

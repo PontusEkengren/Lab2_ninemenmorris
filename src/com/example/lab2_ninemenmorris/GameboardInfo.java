@@ -11,6 +11,7 @@ public class GameboardInfo {
 	private int playerTurn;
 	private int gameStatus;
 	private int[] piecesPosNMM=new int[25];
+	private int messageInfo=-1;
 	
 	public GameboardInfo(){}
 
@@ -61,6 +62,31 @@ public class GameboardInfo {
 		this.gameStatus = gameStatus;
 	}
 	
+	public String getMessageInfo() {
+		switch(messageInfo){
+		case -1:
+			return "-1";
+		case 0:
+			return "Invalid remove, remove your opponents tile";
+		case 1:
+			return "Removed oppnents tile successfully";
+		case 2:
+			return "MORRIS! Remove your opponents tile!";
+		case 3:
+			return "Invalid move! Select your from tile";
+		case 4:
+			return "Congratulations! BLUE have won!";
+		case 5:
+			return "Congratulations! RED have won!";
+			default:
+				return "YOU SUCK!";
+		}
+	}
+
+	public void setMessageInfo(int messageInfo) {
+		this.messageInfo = messageInfo;
+	}
+
 	public int converterFromNMMtoPos(int NmmPos){
     	switch(NmmPos){
     	case 1:

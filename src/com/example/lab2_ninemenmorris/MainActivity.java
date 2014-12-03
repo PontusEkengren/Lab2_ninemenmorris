@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
 		case R.id.btnStartGame:
 			Intent i;
 			i=new Intent(this,Gameboard.class);
-			startActivity(i);
+			startActivityForResult(i,1);
 			break;
 		
 		}

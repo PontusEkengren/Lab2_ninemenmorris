@@ -48,18 +48,30 @@ public class Gameplay {
     
     private void move(int posInNMM){
     	//savedFrom=-1;
-    	int messageInfo=-1;
+    	int messageInfo = -1;
     	
     	int color = nmm.getTurn();
     	//If remove = true, remove piece
     	if(timeForRemove){
-    		System.out.println("BEFORE REMOVE Color turn: 1=BLUE 2=RED COLOR: "+color);
+    		
     		if(nmm.remove(posInNMM, color)){
-    			//Win
-    			System.out.println("AFTER REMOVE Color turn: 1=BLUE 2=RED COLOR: "+color);
+    			
     			timeForRemove=false;
+    			messageInfo=1; //Removed successfully
+    			
+    			System.out.println("COLOR TURN NOW: "+nmm.getTurn());
+    			
+    			if(nmm.win(nmm.getTurn())){
+    				if(nmm.getTurn()==1){
+    					messageInfo=5;
+    				}else{
+    					messageInfo=4;
+    				}
+    				
+    			}
     		}else{
-    			//You can not remove your own piece
+    			messageInfo=0; //Invalid move, cannot remove own piece or empty space
+    			
     		}
     		
     	}else{
@@ -69,11 +81,12 @@ public class Gameplay {
 	    		if(nmm.legalMove(posInNMM, 0, color)){
 	    			//Set in gbinfo next player turns
 	    			//Remove
-	    			System.out.println("MOVING PIECE Color turn: 1=BLUE 2=RED"+color);
+	    			
 	    			if(nmm.remove(posInNMM)){
 	    				togglePlayer();
-	    				System.out.println("REMOVE POSITIVE Color turn: 1=BLUE 2=RED"+color);
+	    				
 	    				timeForRemove=true;
+	    				messageInfo=2; //MORRIS, remove your opponents piece
 	    				//Morris
 	    				//Set in gbinfo morris, same players turn
 	    			}
@@ -101,10 +114,13 @@ public class Gameplay {
 		    			if(nmm.remove(posInNMM)){
 		    				togglePlayer();
 		    				timeForRemove=true;
+		    				messageInfo=2; //MORRIS, remove your opponents piece
 		    				//Morris
 		    				//Set in gbinfo morris, same players turn
 		    			}
 		    			gbInfo.setPiecesPos(nmm.getGameplan());
+		    		}else{
+		    			messageInfo=3;
 		    		}
 		    		fromSelected=false;
 	    		}else{
@@ -115,7 +131,8 @@ public class Gameplay {
 	    		
 	    	}
     	}
-    	
+    	gbInfo.setPlayerTurn(nmm.getTurn());
+    	gbInfo.setMessageInfo(messageInfo);
     	gbInfo.setPiecesPos(nmm.getGameplan());
     	
     }
