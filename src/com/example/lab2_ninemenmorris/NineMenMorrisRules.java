@@ -20,7 +20,7 @@ package com.example.lab2_ninemenmorris;
 
 public class NineMenMorrisRules {
 	private int[] gameplan;
-	public int bluemarker, redmarker;
+	private int bluemarker, redmarker;
 	private int turn; // player in turn
 
 	public void setTurn(int turn){
@@ -38,6 +38,23 @@ public class NineMenMorrisRules {
 	public void setGameplan(int[] gameplan) {
 		this.gameplan = gameplan;
 	}
+	
+	public int getBluemarker() {
+		return bluemarker;
+	}
+
+	public void setBluemarker(int bluemarker) {
+		this.bluemarker = bluemarker;
+	}
+
+	public int getRedmarker() {
+		return redmarker;
+	}
+
+	public void setRedmarker(int redmarker) {
+		this.redmarker = redmarker;
+	}
+
 
 
 	public static final int BLUE_MOVES = 1;
@@ -226,7 +243,7 @@ public class NineMenMorrisRules {
 		else
 			return false;
 	}
-
+	
 	/**
 	 * Returns EMPTY_SPACE = 0 BLUE_MARKER = 4 RED_MARKER = 5
 	 */

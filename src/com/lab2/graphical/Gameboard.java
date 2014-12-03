@@ -28,12 +28,14 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewTreeObserver;
 import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -57,6 +59,7 @@ public class Gameboard extends ActionBarActivity{
     private ArrayList<Piece> pieces = null;
     private FileWriter fileWriter= null;
     private SharedPreferences myPreferences;
+    private NineMenMorrisRules nmm = null;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +69,13 @@ public class Gameboard extends ActionBarActivity{
         gameBoard = (ImageView) findViewById(R.id.imgGameboard);
         tvPlayersTurn = (TextView) findViewById(R.id.txtViewPTurn);
         
+
+        
         myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         
         final boolean isSaved = myPreferences.getBoolean(IS_SAVED, false);
+        
+        final RelativeLayout layout = (RelativeLayout) findViewById(R.id.relaLayout);
         
         if(isSaved){
         	gbInfo = new GameboardInfo();
@@ -77,8 +84,8 @@ public class Gameboard extends ActionBarActivity{
         	BufferedReader bufferedReader=null;
         	StringBuffer storedString = new StringBuffer();
         	String[] arrayFromFile=null;
-        	String[] playerTurnArray=new String[2];
-        	int playerTurn=-1;
+        	int[] piecePos=new int[25];
+        	int playerTurn = -1;
         	
         	try {
 				inputStream=openFileInput(filename);
@@ -88,34 +95,84 @@ public class Gameboard extends ActionBarActivity{
 	            if ((strLine = bufferedReader.readLine()) != null) {
 	                storedString.append(strLine);
 	                arrayFromFile=strLine.split(",");
-	                playerTurnArray = strLine.split("\n");
-	                playerTurn = Integer.parseInt(playerTurnArray[0]);
-	                System.out.println("PLAYER TURN: "+playerTurn);
+	                for(int i=1;i<25;i++){
+	                	piecePos[converterFromPosToNMM(i)]=Integer.parseInt(arrayFromFile[i-1]);
+	                }
+	                playerTurn=Integer.parseInt(arrayFromFile[24]);
 	                
+	                gbInfo.setPiecesPos(piecePos);
+	                gbInfo.setPlayerTurn(playerTurn);
+	                gbInfo.savePieces(Integer.parseInt(arrayFromFile[25]), Integer.parseInt(arrayFromFile[26]));
+	                nmm=gbInfo.initNmm();
+	                
+	                drawPiece = new ImageDraw(getApplicationContext());
+	                layout.addView(drawPiece);
+	                
+	                ViewTreeObserver vto = gameBoard.getViewTreeObserver();
+	                vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+	                    public boolean onPreDraw() {
+	                    	gameBoard.getViewTreeObserver().removeOnPreDrawListener(this);
+	                    	
+	                    	initializeGameBoard();
+	                    	pieces=null;
+	                		pieces = new ArrayList<Piece>();
+	                		for(int i=1;i<gbInfo.getPiecesPos().length;i++){
+	                			//System.out.println(i+": "+gbInfo.getPiecesPos()[i]);
+	                			if(gbInfo.getPiecesPos()[i]==4){
+	                				System.out.println("xCords: "+xCords[i]);
+	                				Paint paint = new Paint();
+	                        		paint.setColor(Color.BLUE);
+	                				pieces.add(new Piece(xCords[i], yCords[i], paint));
+	                			
+	                			}else if(gbInfo.getPiecesPos()[i]==5){
+	                				Paint paint = new Paint();
+	                        		paint.setColor(Color.RED);
+	                				pieces.add(new Piece(xCords[i], yCords[i], paint));
+	                			}
+	                		}
+	                		
+	                		
+	                		
+	                		drawPiece.drawCircle(pieces);
+	                        return true;
+	                    }
+	                });
+	                //Redraw pieces from last saved session
+	                
+	                
+	                if(gbInfo.getPlayerTurn() == 1){
+            			tvPlayersTurn.setText("BLUE PLAYER TURN");
+            		}else{
+            			tvPlayersTurn.setText("RED PLAYER TURN");
+            		}
+
 	            }
 			}catch (Exception e) {
 				// TODO Auto-generated catch block
 				Toast.makeText(this, "Can not read from file, try again later or start a new game", Toast.LENGTH_SHORT).show();
 			}
             
+        }else{
+        	tvPlayersTurn.setText("RED PLAYER TURN");
+        	drawPiece = new ImageDraw(getApplicationContext());
+            layout.addView(drawPiece);
         }
         
-        
-        final RelativeLayout layout = (RelativeLayout) findViewById(R.id.relaLayout);
-        
-        tvPlayersTurn.setText("RED PLAYER TURN");
-        
-        drawPiece = new ImageDraw(getApplicationContext());
-        layout.addView(drawPiece);
-        
+    
         //Rect rect = new Rect(gameBoard.getLeft(),gameBoard.getTop(), gameBoard.getRight(), gameBoard.getBottom());
         
+
         layout.setOnTouchListener(new OnTouchListener() {
            
             public boolean onTouch(View v, MotionEvent ev) {
             	if(initDone==false){
             		initializeGameBoard();
-            		gamePlay = new Gameplay(xCords, yCords);
+            		if(!isSaved){
+            			gamePlay = new Gameplay(xCords, yCords);
+            		}else{
+            			gamePlay = new Gameplay(xCords, yCords, nmm, gbInfo);
+            		}
+            		
             		initDone=true;
             	}
                 switch(ev.getAction()){
@@ -130,10 +187,7 @@ public class Gameboard extends ActionBarActivity{
                 			gbInfo = gamePlay.getGbInfo();
                 		}
                 		
-                		
-                		
-                		//gbInfo.getPiecesPos();
-                		pieces=null;
+    	                pieces=null;
                 		pieces = new ArrayList<Piece>();
                 		for(int i=1;i<gbInfo.getPiecesPos().length;i++){
                 			//System.out.println(i+": "+gbInfo.getPiecesPos()[i]);
@@ -153,6 +207,9 @@ public class Gameboard extends ActionBarActivity{
                 		
                 		
                 		drawPiece.drawCircle(pieces);
+                		
+                		//gbInfo.getPiecesPos();
+                		
                 		
                 		if(gbInfo.getMessageInfo().contains("Congratulations")){
                 			Toast.makeText(getApplicationContext(), gbInfo.getMessageInfo(), Toast.LENGTH_SHORT).show();
@@ -205,6 +262,8 @@ public class Gameboard extends ActionBarActivity{
         });
         
     }
+    
+    
     @Override
     public void onPause(){
     	super.onPause();
@@ -220,8 +279,9 @@ public class Gameboard extends ActionBarActivity{
     	for(int i=1;i<25;i++){
     		data+=gbInfo.getPiecesPos()[i]+",";
     	}
-    	data+="\n";
-    	data+=gbInfo.getPlayerTurn();
+    	data+=gbInfo.getPlayerTurn()+",";
+    	data+=gbInfo.getBluemarker()+",";
+    	data+=gbInfo.getRedmarker();
     	
         try {
         	fileWriter = new FileWriter(new File(getApplication().getFilesDir(),filename));
@@ -231,6 +291,63 @@ public class Gameboard extends ActionBarActivity{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public int converterFromPosToNMM(int pos){
+    	switch (pos){
+    	
+    	case 1:
+    		return 3;
+    	case 2:
+			return 6;
+		case 3:
+			return 9;
+		case 4:
+			return 2;
+		case 5:
+			return 5;
+		case 6:
+			return 8;
+		case 7:
+			return 1;
+		case 8:
+			return 4;
+		case 9:
+			return 7;
+		case 10:
+			return 24;
+		case 11:
+    		return 23;
+		case 12:
+			return 22;
+		case 13:
+    		return 10;
+		case 14:
+			return 11;
+		case 15:
+    		return 12;
+		case 16:
+    		return 19;
+		case 17:
+    		return 16;
+		case 18:
+			return 13;
+		case 19:
+    		return 20;
+		case 20:
+    		return 17;
+		case 21:
+    		return 14;
+		case 22:
+    		return 21;
+		case 23:
+    		return 18;
+		case 24:
+    		return 15;
+    		default:
+    			return -1;
+    	}
+    	
     }
     
     

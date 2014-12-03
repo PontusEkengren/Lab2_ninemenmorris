@@ -13,6 +13,8 @@ public class GameboardInfo {
 	private int[] piecesPosNMM=new int[25];
 	private int messageInfo=-1;
 	private NineMenMorrisRules nmm =null;
+	private int bluemarker=0;
+	private int redmarker=0;
 	
 	
 	public GameboardInfo(){}
@@ -21,6 +23,8 @@ public class GameboardInfo {
 		nmm = new NineMenMorrisRules();
 		nmm.setGameplan(piecesPosNMM);
 		nmm.setTurn(playerTurn);
+		nmm.setBluemarker(bluemarker);
+		nmm.setRedmarker(redmarker);
 		return nmm;
 	}
 
@@ -71,6 +75,19 @@ public class GameboardInfo {
 		this.gameStatus = gameStatus;
 	}
 	
+	public void savePieces(int bluemarker, int redmarker){
+		this.bluemarker=bluemarker;
+		this.redmarker=redmarker;
+	}
+	
+	public int getBluemarker() {
+		return bluemarker;
+	}
+
+	public int getRedmarker() {
+		return redmarker;
+	}
+
 	public String getMessageInfo() {
 		switch(messageInfo){
 		case -1:

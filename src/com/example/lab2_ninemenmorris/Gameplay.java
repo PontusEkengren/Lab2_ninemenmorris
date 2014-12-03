@@ -11,7 +11,7 @@ public class Gameplay {
     private Boolean initNotDone=true;
     private int initMoveCounter=0;
     private Boolean timeForRemove=false;
-    GameboardInfo gbInfo = null;
+    private GameboardInfo gbInfo = null;
     private boolean fromSelected=false;
     private int savedFrom;
     
@@ -26,6 +26,17 @@ public class Gameplay {
     	
     	createHitBoxes();
     	
+    }
+    
+    public Gameplay(int[] xCords, int[] yCords, NineMenMorrisRules nmm, GameboardInfo gbInfo){
+    	this.xCords = xCords;
+    	this.yCords = yCords;
+    	rectHitBoxes = new Rect[25];
+    	this.gbInfo=gbInfo;
+    	//if saved game gbInfo.init to nmm;
+    	this.nmm=nmm;
+    	
+    	createHitBoxes();
     }
     
     private void createHitBoxes(){
@@ -95,7 +106,7 @@ public class Gameplay {
 	    			
 	    			
 	    			initMoveCounter++;
-	    			if((nmm.bluemarker+nmm.redmarker)<1){ //Note: Maybe remove and put in gameboardinfo
+	    			if((nmm.getBluemarker()+nmm.getRedmarker())<1){ //Note: Maybe remove and put in gameboardinfo
 	        			initNotDone=false;
 	        		}
 	    			
@@ -133,6 +144,8 @@ public class Gameplay {
 	    		
 	    	}
     	}
+    	
+    	gbInfo.savePieces(nmm.getBluemarker(), nmm.getRedmarker());
     	gbInfo.setPlayerTurn(nmm.getTurn());
     	gbInfo.setMessageInfo(messageInfo);
     	gbInfo.setPiecesPos(nmm.getGameplan());
