@@ -12,6 +12,8 @@ public class Gameplay {
     private int initMoveCounter=0;
     private Boolean timeForRemove=false;
     GameboardInfo gbInfo = null;
+    private boolean fromSelected=false;
+    private int savedFrom;
     
     
     public Gameplay(int[] xCords, int[] yCords){
@@ -36,7 +38,7 @@ public class Gameplay {
     public int checkIfInBound(float x, float y){
     	for(int i=1;i<25;i++){
     		if(rectHitBoxes[i].contains((int)x, (int)y)){
-    			move(converterFromPosToNMM(i), 0); 
+    			move(converterFromPosToNMM(i)); 
     			return i;
     		}
     	}
@@ -44,15 +46,17 @@ public class Gameplay {
     	
     }
     
-    private void move(int posInNMM, int from){
+    private void move(int posInNMM){
+    	//savedFrom=-1;
+    	int messageInfo=-1;
     	
     	int color = nmm.getTurn();
     	//If remove = true, remove piece
     	if(timeForRemove){
-    		
+    		System.out.println("BEFORE REMOVE Color turn: 1=BLUE 2=RED COLOR: "+color);
     		if(nmm.remove(posInNMM, color)){
     			//Win
-    			togglePlayer();
+    			System.out.println("AFTER REMOVE Color turn: 1=BLUE 2=RED COLOR: "+color);
     			timeForRemove=false;
     		}else{
     			//You can not remove your own piece
@@ -65,8 +69,10 @@ public class Gameplay {
 	    		if(nmm.legalMove(posInNMM, 0, color)){
 	    			//Set in gbinfo next player turns
 	    			//Remove
+	    			System.out.println("MOVING PIECE Color turn: 1=BLUE 2=RED"+color);
 	    			if(nmm.remove(posInNMM)){
 	    				togglePlayer();
+	    				System.out.println("REMOVE POSITIVE Color turn: 1=BLUE 2=RED"+color);
 	    				timeForRemove=true;
 	    				//Morris
 	    				//Set in gbinfo morris, same players turn
@@ -74,7 +80,7 @@ public class Gameplay {
 	    			
 	    			
 	    			initMoveCounter++;
-	    			if(initMoveCounter>17){ //Note: Maybe remove and put in gameboardinfo
+	    			if((nmm.bluemarker+nmm.redmarker)<1){ //Note: Maybe remove and put in gameboardinfo
 	        			initNotDone=false;
 	        		}
 	    			
@@ -85,6 +91,27 @@ public class Gameplay {
 	    		
 	    	}else{
 	    		//If all 18 pieces is on board
+	    		System.out.println("18 pieces on board");
+	    		if(fromSelected){
+	    			System.out.println("18 pieces on board: Preforming move");
+	    			int from = savedFrom;
+		    		if(nmm.legalMove(posInNMM, from, color)){
+		    			//Set in gbinfo next player turns
+		    			//Remove
+		    			if(nmm.remove(posInNMM)){
+		    				togglePlayer();
+		    				timeForRemove=true;
+		    				//Morris
+		    				//Set in gbinfo morris, same players turn
+		    			}
+		    			gbInfo.setPiecesPos(nmm.getGameplan());
+		    		}
+		    		fromSelected=false;
+	    		}else{
+	    			System.out.println("18 pieces on board: Saving from location");
+	    			savedFrom=posInNMM;
+	    			fromSelected=true;
+	    		}
 	    		
 	    	}
     	}

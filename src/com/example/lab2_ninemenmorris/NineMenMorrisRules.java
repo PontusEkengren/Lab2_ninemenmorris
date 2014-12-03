@@ -20,7 +20,7 @@ package com.example.lab2_ninemenmorris;
 
 public class NineMenMorrisRules {
 	private int[] gameplan;
-	private int bluemarker, redmarker;
+	public int bluemarker, redmarker;
 	private int turn; // player in turn
 
 	public void setTurn(int turn){
@@ -60,7 +60,7 @@ public class NineMenMorrisRules {
 	public boolean legalMove(int To, int From, int color) {
 		if (color == turn) {
 			if (turn == RED_MOVES) {
-				if (redmarker >= 0) {
+				if (redmarker > 0) {
 					if (gameplan[To] == EMPTY_SPACE) {
 						gameplan[To] = RED_MARKER;
 						redmarker--;
@@ -69,10 +69,11 @@ public class NineMenMorrisRules {
 					}
 				}
 				/*else*/
-				if (gameplan[To] == EMPTY_SPACE) {
+				if (gameplan[To] == EMPTY_SPACE && gameplan[From] == 5) {
 					boolean valid = isValidMove(To, From);
 					if (valid == true) {
 						gameplan[To] = RED_MARKER;
+						gameplan[From]= EMPTY_SPACE;
 						turn = BLUE_MOVES;
 						return true;
 					} else {
@@ -82,7 +83,7 @@ public class NineMenMorrisRules {
 					return false;
 				}
 			} else {
-				if (bluemarker >= 0) {
+				if (bluemarker > 0) {
 					if (gameplan[To] == EMPTY_SPACE) {
 						gameplan[To] = BLUE_MARKER;
 						bluemarker--;
@@ -90,10 +91,11 @@ public class NineMenMorrisRules {
 						return true;
 					}
 				}
-				if (gameplan[To] == EMPTY_SPACE) {
+				if (gameplan[To] == EMPTY_SPACE && gameplan[From] == 4) {
 					boolean valid = isValidMove(To, From);
 					if (valid == true) {
 						gameplan[To] = BLUE_MARKER;
+						gameplan[From]= EMPTY_SPACE;
 						turn = RED_MOVES;
 						return true;
 					} else {
@@ -170,12 +172,35 @@ public class NineMenMorrisRules {
 	 * Returns true if the marker where successfully removed
 	 */
 	public boolean remove(int From, int color) {
-		if (gameplan[From] != color) {
+		System.out.println("PLAYER COLOR: "+color);
+		/*if (gameplan[From] != color) { //Compares with wrongs numbers!!!!!!
 			gameplan[From] = EMPTY_SPACE;
+			togglePlayer();
 			return true;
 		} else
 			return false;
+		*/
+		if(gameplan[From] == 4 && color==2) {
+			//You are red and can remove blue
+			gameplan[From] = EMPTY_SPACE;
+			togglePlayer();
+			return true;
+		}else if(gameplan[From] == 5 && color==1) {
+			//You are blue and can remove red
+			gameplan[From] = EMPTY_SPACE;
+			togglePlayer();
+			return true;
+		}else{
+			return false;
+		}
 	}
+	
+    private void togglePlayer(){
+    	if(getTurn()==1) 
+			setTurn(2);//change maby
+        else 
+        	setTurn(1);
+    }
 
 	/**
 	 *  Returns true if the selected player have less than three markerss left.
