@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.apache.http.conn.scheme.PlainSocketFactory;
+
 import com.example.lab2_ninemenmorris.GameboardInfo;
 import com.example.lab2_ninemenmorris.Gameplay;
 import com.example.lab2_ninemenmorris.MainActivity;
@@ -75,6 +77,8 @@ public class Gameboard extends ActionBarActivity{
         	BufferedReader bufferedReader=null;
         	StringBuffer storedString = new StringBuffer();
         	String[] arrayFromFile=null;
+        	String[] playerTurnArray=new String[2];
+        	int playerTurn=-1;
         	
         	try {
 				inputStream=openFileInput(filename);
@@ -84,8 +88,12 @@ public class Gameboard extends ActionBarActivity{
 	            if ((strLine = bufferedReader.readLine()) != null) {
 	                storedString.append(strLine);
 	                arrayFromFile=strLine.split(",");
+	                playerTurnArray = strLine.split("\n");
+	                playerTurn = Integer.parseInt(playerTurnArray[0]);
+	                System.out.println("PLAYER TURN: "+playerTurn);
+	                
 	            }
-			} catch (Exception e) {
+			}catch (Exception e) {
 				// TODO Auto-generated catch block
 				Toast.makeText(this, "Can not read from file, try again later or start a new game", Toast.LENGTH_SHORT).show();
 			}
@@ -118,7 +126,7 @@ public class Gameboard extends ActionBarActivity{
                 	checkIfValidPos=gamePlay.checkIfInBound(ev.getX(), ev.getY());
                 	
                 	if(checkIfValidPos!=-1){
-                		if(isSaved){
+                		if(!isSaved){
                 			gbInfo = gamePlay.getGbInfo();
                 		}
                 		
