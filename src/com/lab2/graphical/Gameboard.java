@@ -1,9 +1,11 @@
 package com.lab2.graphical;
 
+import java.util.ArrayList;
+
+import com.example.lab2_ninemenmorris.GameboardInfo;
 import com.example.lab2_ninemenmorris.Gameplay;
 import com.example.lab2_ninemenmorris.NineMenMorrisRules;
 import com.example.lab2_ninemenmorris.R;
-import com.example.lab2_ninemenmorris.Unitinfo;
 
 import android.app.ActionBar.LayoutParams;
 import android.graphics.Bitmap;
@@ -35,6 +37,12 @@ public class Gameboard extends ActionBarActivity{
     private boolean initDone=false;
     private Gameplay gamePlay;
     private int checkIfValidPos=-1;
+    private GameboardInfo gbInfo=null;
+    private int[] xCordsToDraw=new int[25];
+    private int[] yCordsToDraw=new int[25];
+    private Paint[] paintToDraw=new Paint[25];
+    private ArrayList<Piece> pieces = null;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,13 +70,38 @@ public class Gameboard extends ActionBarActivity{
                 switch(ev.getAction()){
                 case MotionEvent.ACTION_UP:
                 	
+                	System.out.println("Check pos: X: "+ev.getX()+" Y: "+ev.getY());
+                	
                 	checkIfValidPos=gamePlay.checkIfInBound(ev.getX(), ev.getY());
+                	
                 	if(checkIfValidPos!=-1){
                 		
-                		Paint paint = new Paint();
-                		paint.setColor(Color.BLUE);
-                		drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos],paint);	
+                		gbInfo = gamePlay.getGbInfo();
                 		
+                		
+                		//gbInfo.getPiecesPos();
+                		pieces=null;
+                		pieces = new ArrayList<Piece>();
+                		for(int i=1;i<gbInfo.getPiecesPos().length;i++){
+                			//System.out.println(i+": "+gbInfo.getPiecesPos()[i]);
+                			if(gbInfo.getPiecesPos()[i]==4){
+                				
+                				Paint paint = new Paint();
+                        		paint.setColor(Color.BLUE);
+                				pieces.add(new Piece(xCords[i], yCords[i], paint));
+                			
+                			}else if(gbInfo.getPiecesPos()[i]==5){
+                				Paint paint = new Paint();
+                        		paint.setColor(Color.RED);
+                				pieces.add(new Piece(xCords[i], yCords[i], paint));
+                			}
+                		}
+                		
+                		
+                		
+                		drawPiece.drawCircle(pieces);	
+                		//pieces.removeAll(pieces);
+                		//redraw from gamebord info
                 		
             			//drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);
                 		
@@ -94,60 +127,60 @@ public class Gameboard extends ActionBarActivity{
     
     public void initializeGameBoard(){
 	      //Rad0
-        xCords[0]=0+gameBoard.getLeft();//gameBoard.getLeft()-gameBoard.getLeft();
-        yCords[0]=0+gameBoard.getTop();//gameBoard.getTop()-gameBoard.getTop();
-        xCords[1]=(gameBoard.getWidth()/2)+gameBoard.getLeft();
-        yCords[1]=0+gameBoard.getTop();
-        xCords[2]=gameBoard.getWidth()+gameBoard.getLeft();
+        xCords[1]=0+gameBoard.getLeft();//gameBoard.getLeft()-gameBoard.getLeft();
+        yCords[1]=0+gameBoard.getTop();//gameBoard.getTop()-gameBoard.getTop();
+        xCords[2]=(gameBoard.getWidth()/2)+gameBoard.getLeft();
         yCords[2]=0+gameBoard.getTop();
+        xCords[3]=gameBoard.getWidth()+gameBoard.getLeft();
+        yCords[3]=0+gameBoard.getTop();
         //Rad1
-        xCords[3]=((gameBoard.getWidth()/6)*1)+gameBoard.getLeft();
-        yCords[3]=((gameBoard.getHeight()/6)*1)+gameBoard.getTop();
-        xCords[4]=(gameBoard.getWidth()/2)+gameBoard.getLeft();
-        yCords[4]=(gameBoard.getHeight()/2/3)+gameBoard.getTop();
-        xCords[5]=((gameBoard.getWidth()/2/3)*5)+gameBoard.getLeft();
+        xCords[4]=((gameBoard.getWidth()/6)*1)+gameBoard.getLeft();
+        yCords[4]=((gameBoard.getHeight()/6)*1)+gameBoard.getTop();
+        xCords[5]=(gameBoard.getWidth()/2)+gameBoard.getLeft();
         yCords[5]=(gameBoard.getHeight()/2/3)+gameBoard.getTop();
+        xCords[6]=((gameBoard.getWidth()/2/3)*5)+gameBoard.getLeft();
+        yCords[6]=(gameBoard.getHeight()/2/3)+gameBoard.getTop();
         //Rad2
-        xCords[6]=((gameBoard.getWidth()/2/3)*2)+gameBoard.getLeft();
-        yCords[6]=((gameBoard.getHeight()/2/3)*2)+gameBoard.getTop();
-        xCords[7]=((gameBoard.getWidth()/2/3)*3)+gameBoard.getLeft();
+        xCords[7]=((gameBoard.getWidth()/2/3)*2)+gameBoard.getLeft();
         yCords[7]=((gameBoard.getHeight()/2/3)*2)+gameBoard.getTop();
-        xCords[8]=((gameBoard.getWidth()/2/3)*4)+gameBoard.getLeft();
+        xCords[8]=((gameBoard.getWidth()/2/3)*3)+gameBoard.getLeft();
         yCords[8]=((gameBoard.getHeight()/2/3)*2)+gameBoard.getTop();
+        xCords[9]=((gameBoard.getWidth()/2/3)*4)+gameBoard.getLeft();
+        yCords[9]=((gameBoard.getHeight()/2/3)*2)+gameBoard.getTop();
         //Rad3
-        xCords[9]=0+gameBoard.getLeft();
-        yCords[9]=((gameBoard.getHeight()/6)*3)+gameBoard.getTop();
-        xCords[10]=((gameBoard.getWidth()/6)*1)+gameBoard.getLeft();
+        xCords[10]=0+gameBoard.getLeft();
         yCords[10]=((gameBoard.getHeight()/6)*3)+gameBoard.getTop();
-        xCords[11]=((gameBoard.getWidth()/6)*2)+gameBoard.getLeft();
+        xCords[11]=((gameBoard.getWidth()/6)*1)+gameBoard.getLeft();
         yCords[11]=((gameBoard.getHeight()/6)*3)+gameBoard.getTop();
-        xCords[12]=((gameBoard.getWidth()/6)*4)+gameBoard.getLeft();
+        xCords[12]=((gameBoard.getWidth()/6)*2)+gameBoard.getLeft();
         yCords[12]=((gameBoard.getHeight()/6)*3)+gameBoard.getTop();
-        xCords[13]=((gameBoard.getWidth()/6)*5)+gameBoard.getLeft();
+        xCords[13]=((gameBoard.getWidth()/6)*4)+gameBoard.getLeft();
         yCords[13]=((gameBoard.getHeight()/6)*3)+gameBoard.getTop();
-        xCords[14]=((gameBoard.getWidth()/6)*6)+gameBoard.getLeft();
+        xCords[14]=((gameBoard.getWidth()/6)*5)+gameBoard.getLeft();
         yCords[14]=((gameBoard.getHeight()/6)*3)+gameBoard.getTop();
+        xCords[15]=((gameBoard.getWidth()/6)*6)+gameBoard.getLeft();
+        yCords[15]=((gameBoard.getHeight()/6)*3)+gameBoard.getTop();
         //Rad4
-        xCords[15]=((gameBoard.getWidth()/6)*2)+gameBoard.getLeft();
-        yCords[15]=((gameBoard.getHeight()/6)*4)+gameBoard.getTop();
-        xCords[16]=((gameBoard.getWidth()/6)*3)+gameBoard.getLeft();
+        xCords[16]=((gameBoard.getWidth()/6)*2)+gameBoard.getLeft();
         yCords[16]=((gameBoard.getHeight()/6)*4)+gameBoard.getTop();
-        xCords[17]=((gameBoard.getWidth()/6)*4)+gameBoard.getLeft();
+        xCords[17]=((gameBoard.getWidth()/6)*3)+gameBoard.getLeft();
         yCords[17]=((gameBoard.getHeight()/6)*4)+gameBoard.getTop();
+        xCords[18]=((gameBoard.getWidth()/6)*4)+gameBoard.getLeft();
+        yCords[18]=((gameBoard.getHeight()/6)*4)+gameBoard.getTop();
         //Rad5
-        xCords[18]=((gameBoard.getWidth()/6)*1)+gameBoard.getLeft();
-        yCords[18]=((gameBoard.getHeight()/6)*5)+gameBoard.getTop();
-        xCords[19]=((gameBoard.getWidth()/6)*3)+gameBoard.getLeft();
+        xCords[19]=((gameBoard.getWidth()/6)*1)+gameBoard.getLeft();
         yCords[19]=((gameBoard.getHeight()/6)*5)+gameBoard.getTop();
-        xCords[20]=((gameBoard.getWidth()/6)*5)+gameBoard.getLeft();
+        xCords[20]=((gameBoard.getWidth()/6)*3)+gameBoard.getLeft();
         yCords[20]=((gameBoard.getHeight()/6)*5)+gameBoard.getTop();
+        xCords[21]=((gameBoard.getWidth()/6)*5)+gameBoard.getLeft();
+        yCords[21]=((gameBoard.getHeight()/6)*5)+gameBoard.getTop();
         //Rad6
-        xCords[21]=((gameBoard.getWidth()/6)*0)+gameBoard.getLeft();
-        yCords[21]=((gameBoard.getHeight()/6)*6)+gameBoard.getTop();
-        xCords[22]=((gameBoard.getWidth()/6)*3)+gameBoard.getLeft();
+        xCords[22]=((gameBoard.getWidth()/6)*0)+gameBoard.getLeft();
         yCords[22]=((gameBoard.getHeight()/6)*6)+gameBoard.getTop();
-        xCords[23]=((gameBoard.getWidth()/6)*6)+gameBoard.getLeft();
+        xCords[23]=((gameBoard.getWidth()/6)*3)+gameBoard.getLeft();
         yCords[23]=((gameBoard.getHeight()/6)*6)+gameBoard.getTop();
+        xCords[24]=((gameBoard.getWidth()/6)*6)+gameBoard.getLeft();
+        yCords[24]=((gameBoard.getHeight()/6)*6)+gameBoard.getTop();
          
   }
 	

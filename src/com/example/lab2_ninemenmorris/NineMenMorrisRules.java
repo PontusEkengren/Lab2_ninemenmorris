@@ -30,6 +30,15 @@ public class NineMenMorrisRules {
 	public int getTurn() {
 		return turn;
 	}
+	
+	public int[] getGameplan() {
+		return gameplan;
+	}
+
+	public void setGameplan(int[] gameplan) {
+		this.gameplan = gameplan;
+	}
+
 
 	public static final int BLUE_MOVES = 1;
 	public static final int RED_MOVES = 2;
@@ -103,7 +112,7 @@ public class NineMenMorrisRules {
 	 * Returns true if position "to" is part of three in a row.
 	 */
 	public boolean remove(int to) {
-
+		
 		if ((to == 1 || to == 4 || to == 7) && gameplan[1] == gameplan[4]
 				&& gameplan[4] == gameplan[7]) {
 			return true;
@@ -161,7 +170,7 @@ public class NineMenMorrisRules {
 	 * Returns true if the marker where successfully removed
 	 */
 	public boolean remove(int From, int color) {
-		if (gameplan[From] == color) {
+		if (gameplan[From] != color) {
 			gameplan[From] = EMPTY_SPACE;
 			return true;
 		} else

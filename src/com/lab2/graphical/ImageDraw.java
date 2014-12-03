@@ -52,10 +52,8 @@ public class ImageDraw extends View{
 	}
 	
 	
-	public void drawCircle(float x, float y, Paint paint){
-		this.x=x;
-		this.y=y;
-		pieces.add(new Piece((int)x, (int)y, paint));
+	public void drawCircle(ArrayList<Piece> pieces){
+		this.pieces=pieces;
 		this.invalidate();
 	}
 
