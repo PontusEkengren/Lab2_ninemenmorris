@@ -66,8 +66,8 @@ public class NineMenMorrisRules {
 
 	public NineMenMorrisRules() {
 		gameplan = new int[25]; // zeroes
-		bluemarker = 4;
-		redmarker = 4;
+		bluemarker = 9;
+		redmarker = 9;
 		turn = RED_MOVES;
 	}
 

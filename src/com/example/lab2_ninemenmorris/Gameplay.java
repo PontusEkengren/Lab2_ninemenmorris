@@ -39,6 +39,7 @@ public class Gameplay {
     	createHitBoxes();
     }
     
+    //Creates "hitboxes" on every calculated possible touch event
     private void createHitBoxes(){
     	for(int i=1;i<25;i++){
     		System.out.println("create Hit boxes: "+i+" xCordsi: "+xCords[i]+" yCordsi: "+yCords[i]);
@@ -48,6 +49,7 @@ public class Gameplay {
     	
     }
     
+    //Checks if onTouch x,y is within hitbox
     public int checkIfInBound(float x, float y){
     	for(int i=1;i<25;i++){
     		if(rectHitBoxes[i].contains((int)x, (int)y)){
@@ -59,6 +61,8 @@ public class Gameplay {
     	
     }
     
+    
+    //Play rules one round
     private void move(int posInNMM){
     	//savedFrom=-1;
     	int messageInfo = -1;
@@ -145,6 +149,7 @@ public class Gameplay {
 	    	}
     	}
     	
+    	//Saves every turn for session game saving file
     	gbInfo.savePieces(nmm.getBluemarker(), nmm.getRedmarker());
     	gbInfo.setPlayerTurn(nmm.getTurn());
     	gbInfo.setMessageInfo(messageInfo);
@@ -159,7 +164,7 @@ public class Gameplay {
         	nmm.setTurn(1);
     }
     
-    
+    //Converter from our arraypos to nmm
     public int converterFromPosToNMM(int pos){
     	switch (pos){
     	

@@ -73,6 +73,7 @@ public class Gameboard extends ActionBarActivity{
         
         myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         
+        //gets a boolean value if the game is saved or not
         final boolean isSaved = myPreferences.getBoolean(IS_SAVED, false);
         
         final RelativeLayout layout = (RelativeLayout) findViewById(R.id.relaLayout);
@@ -117,9 +118,7 @@ public class Gameboard extends ActionBarActivity{
 	                    	pieces=null;
 	                		pieces = new ArrayList<Piece>();
 	                		for(int i=1;i<gbInfo.getPiecesPos().length;i++){
-	                			//System.out.println(i+": "+gbInfo.getPiecesPos()[i]);
 	                			if(gbInfo.getPiecesPos()[i]==4){
-	                				System.out.println("xCords: "+xCords[i]);
 	                				Paint paint = new Paint();
 	                        		paint.setColor(Color.BLUE);
 	                				pieces.add(new Piece(xCords[i], yCords[i], paint));
@@ -158,13 +157,12 @@ public class Gameboard extends ActionBarActivity{
             layout.addView(drawPiece);
         }
         
-    
-        //Rect rect = new Rect(gameBoard.getLeft(),gameBoard.getTop(), gameBoard.getRight(), gameBoard.getBottom());
         
 
         layout.setOnTouchListener(new OnTouchListener() {
            
             public boolean onTouch(View v, MotionEvent ev) {
+            	//Init important classes
             	if(initDone==false){
             		initializeGameBoard();
             		if(!isSaved){
@@ -187,10 +185,10 @@ public class Gameboard extends ActionBarActivity{
                 			gbInfo = gamePlay.getGbInfo();
                 		}
                 		
+                		//Draw pieces on board
     	                pieces=null;
                 		pieces = new ArrayList<Piece>();
                 		for(int i=1;i<gbInfo.getPiecesPos().length;i++){
-                			//System.out.println(i+": "+gbInfo.getPiecesPos()[i]);
                 			if(gbInfo.getPiecesPos()[i]==4){
                 				
                 				Paint paint = new Paint();
@@ -210,7 +208,7 @@ public class Gameboard extends ActionBarActivity{
                 		
                 		//gbInfo.getPiecesPos();
                 		
-                		
+                		//If game won by one player show alertdialog
                 		if(gbInfo.getMessageInfo().contains("Congratulations")){
                 			Toast.makeText(getApplicationContext(), gbInfo.getMessageInfo(), Toast.LENGTH_SHORT).show();
                 			new AlertDialog.Builder(Gameboard.this)
@@ -219,31 +217,32 @@ public class Gameboard extends ActionBarActivity{
         		            .setPositiveButton("Restart", new DialogInterface.OnClickListener() {
         		                public void onClick(DialogInterface dialog, int which) { 
         		                	Intent i = new Intent(getApplicationContext(),Gameboard.class);
+        		                	SharedPreferences.Editor editor=myPreferences.edit();
+        		            		editor.putBoolean(IS_SAVED, false);
+        		            		editor.commit();
         		                	finish();
-        		                	startActivity(i);
         		                }
         		             })
         		            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-        		                public void onClick(DialogInterface dialog, int which) { 
+        		                public void onClick(DialogInterface dialog, int which) {
+        		                	SharedPreferences.Editor editor=myPreferences.edit();
+        		            		editor.putBoolean(IS_SAVED, false);
+        		            		editor.commit();
         		                	finish();
-        		                	finishActivity(1);
         		                }
         		             }).show();
-                		}else if(!gbInfo.getMessageInfo().equalsIgnoreCase("-1")){
+                			
+                		}else if(!gbInfo.getMessageInfo().equalsIgnoreCase("-1")){ //Shows different moves and wrongs
                 			Toast.makeText(getApplicationContext(), gbInfo.getMessageInfo(), Toast.LENGTH_SHORT).show();
                 		}
+                		//Shows whos turn
                 		if(gbInfo.getPlayerTurn() == 1){
                 			tvPlayersTurn.setText("BLUE PLAYER TURN");
                 		}else{
                 			tvPlayersTurn.setText("RED PLAYER TURN");
                 		}
                 		
-                		
-                		//pieces.removeAll(pieces);
-                		//redraw from gamebord info
-                		
-            			//drawPiece.drawCircle(xCords[checkIfValidPos], yCords[checkIfValidPos]);
-                		
+                		//Resets onTouch of hitboxes
                 		checkIfValidPos=-1;
                 	}else{
                 		Toast.makeText(getApplicationContext(), "Not accurate enough...", Toast.LENGTH_SHORT).show();
@@ -273,6 +272,7 @@ public class Gameboard extends ActionBarActivity{
 		editor.commit();
     }
     
+    //Saves all importat data from current session to file
     private void save(){
     	String data="";
     	
@@ -293,6 +293,7 @@ public class Gameboard extends ActionBarActivity{
         }
     }
     
+    //Convert our array pos to NMMRules class array
     public int converterFromPosToNMM(int pos){
     	switch (pos){
     	
@@ -350,7 +351,7 @@ public class Gameboard extends ActionBarActivity{
     	
     }
     
-    
+    //Init coordinates from screen dpi to array
     public void initializeGameBoard(){
 	      //Rad0
         xCords[1]=0+gameBoard.getLeft();//gameBoard.getLeft()-gameBoard.getLeft();

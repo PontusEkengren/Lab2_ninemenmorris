@@ -21,6 +21,7 @@ public class MainActivity extends ActionBarActivity {
 	private TextView txtSavedGame=null;
 	private Button btnStartGame=null;
 	private Button btnResetSavedGame=null;
+	boolean isSaved=false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
 		
-		final boolean isSaved = myPreferences.getBoolean(IS_SAVED, false);
+		isSaved = myPreferences.getBoolean(IS_SAVED, false);
 		
 		if(isSaved){
 			btnStartGame.setText("Resume game");
@@ -50,7 +51,8 @@ public class MainActivity extends ActionBarActivity {
 		case R.id.btnStartGame:
 			Intent i;
 			i=new Intent(this,Gameboard.class);
-			startActivityForResult(i,1);
+			startActivity(i);
+			//startActivityForResult(i,1);
 			break;
 		case R.id.btnResetSavedGame:
 			SharedPreferences.Editor editor=myPreferences.edit();
@@ -62,6 +64,19 @@ public class MainActivity extends ActionBarActivity {
 			break;
 		}
 		
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		if(isSaved){
+			btnStartGame.setText("Resume game");
+			txtSavedGame.setText("Game in progress");
+			btnResetSavedGame.setVisibility(View.VISIBLE);
+		}else{
+			btnStartGame.setText("Start game");
+			txtSavedGame.setText("");
+		}
 	}
 
 	@Override

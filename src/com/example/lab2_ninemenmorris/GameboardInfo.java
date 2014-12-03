@@ -88,6 +88,7 @@ public class GameboardInfo {
 		return redmarker;
 	}
 
+	//Sends back game info message (TOAST)
 	public String getMessageInfo() {
 		switch(messageInfo){
 		case -1:
@@ -99,7 +100,7 @@ public class GameboardInfo {
 		case 2:
 			return "MORRIS! Remove your opponents tile!";
 		case 3:
-			return "Invalid move! Select your from tile";
+			return "Invalid move! Select your -FROM- tile";
 		case 4:
 			return "Congratulations! BLUE have won!";
 		case 5:
@@ -120,7 +121,6 @@ public class GameboardInfo {
     	case 2:
     		return 4;
     	case 3:
-    		//return nmm.getGameplan()[3];
     		return 1;
     	case 4:
     		return 8;
