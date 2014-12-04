@@ -64,6 +64,7 @@ public class Gameplay {
     
     //Play rules one round
     private void move(int posInNMM){
+    	
     	//savedFrom=-1;
     	int messageInfo = -1;
     	
@@ -93,7 +94,7 @@ public class Gameplay {
     		
     	}else{
     		// If pieces on board below count 18 
-	    	if(initNotDone){
+	    	if((nmm.getBluemarker()+nmm.getRedmarker())>1){
 	    		
 	    		if(nmm.legalMove(posInNMM, 0, color)){
 	    			//Set in gbinfo next player turns
@@ -154,6 +155,7 @@ public class Gameplay {
     	gbInfo.setPlayerTurn(nmm.getTurn());
     	gbInfo.setMessageInfo(messageInfo);
     	gbInfo.setPiecesPos(nmm.getGameplan());
+    	
     	
     }
     

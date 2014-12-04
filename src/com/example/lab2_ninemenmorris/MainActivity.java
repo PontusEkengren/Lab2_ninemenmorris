@@ -93,6 +93,13 @@ public class MainActivity extends ActionBarActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        	SharedPreferences.Editor editor=myPreferences.edit();
+    		editor.putBoolean(IS_SAVED, false);
+    		editor.commit();
+			Intent i;
+			i=new Intent(this,Gameboard.class);
+			startActivity(i);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

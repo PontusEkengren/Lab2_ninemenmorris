@@ -32,6 +32,8 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -60,25 +62,26 @@ public class Gameboard extends ActionBarActivity{
     private FileWriter fileWriter= null;
     private SharedPreferences myPreferences;
     private NineMenMorrisRules nmm = null;
+    private boolean restartGame=false;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gameboard);
-        
+        gameBoard = null;
         gameBoard = (ImageView) findViewById(R.id.imgGameboard);
         tvPlayersTurn = (TextView) findViewById(R.id.txtViewPTurn);
         
-
         
         myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         
         //gets a boolean value if the game is saved or not
-        final boolean isSaved = myPreferences.getBoolean(IS_SAVED, false);
+        boolean isSaved = myPreferences.getBoolean(IS_SAVED, false);
+        
         
         final RelativeLayout layout = (RelativeLayout) findViewById(R.id.relaLayout);
         
-        if(isSaved){
+        if(myPreferences.getBoolean(IS_SAVED, false)){
         	gbInfo = new GameboardInfo();
         	InputStream inputStream=null;
         	InputStreamReader streamReader=null;
@@ -165,7 +168,7 @@ public class Gameboard extends ActionBarActivity{
             	//Init important classes
             	if(initDone==false){
             		initializeGameBoard();
-            		if(!isSaved){
+            		if(!myPreferences.getBoolean(IS_SAVED, false)){
             			gamePlay = new Gameplay(xCords, yCords);
             		}else{
             			gamePlay = new Gameplay(xCords, yCords, nmm, gbInfo);
@@ -181,10 +184,12 @@ public class Gameboard extends ActionBarActivity{
                 	checkIfValidPos=gamePlay.checkIfInBound(ev.getX(), ev.getY());
                 	
                 	if(checkIfValidPos!=-1){
-                		if(!isSaved){
+                		if(!myPreferences.getBoolean(IS_SAVED, false)){
                 			gbInfo = gamePlay.getGbInfo();
                 		}
                 		
+                		initializeGameBoard();
+                		System.out.println("xCords: "+xCords[1]);
                 		//Draw pieces on board
     	                pieces=null;
                 		pieces = new ArrayList<Piece>();
@@ -266,10 +271,18 @@ public class Gameboard extends ActionBarActivity{
     @Override
     public void onPause(){
     	super.onPause();
-    	save();
-    	SharedPreferences.Editor editor=myPreferences.edit();
-		editor.putBoolean(IS_SAVED, true);
-		editor.commit();
+    	if(initDone){
+    		if(!restartGame){
+        		save();
+            	SharedPreferences.Editor editor=myPreferences.edit();
+        		editor.putBoolean(IS_SAVED, true);
+        		editor.commit();
+        	}else{
+        		restartGame=false;
+        	}
+    	}
+    	
+    	finish();
     }
     
     //Saves all importat data from current session to file
@@ -410,5 +423,32 @@ public class Gameboard extends ActionBarActivity{
         yCords[24]=((gameBoard.getHeight()/6)*6)+gameBoard.getTop();
          
   }
-	
+    
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			restartGame=true;
+			myPreferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        	SharedPreferences.Editor editor=myPreferences.edit();
+    		editor.putBoolean(IS_SAVED, false);
+    		editor.commit();
+			Intent i;
+			i=new Intent(this,Gameboard.class);
+			startActivity(i);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }
+	

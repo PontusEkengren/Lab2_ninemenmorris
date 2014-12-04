@@ -17,7 +17,9 @@ public class GameboardInfo {
 	private int redmarker=0;
 	
 	
-	public GameboardInfo(){}
+	public GameboardInfo(){
+		
+	}
 	
 	public NineMenMorrisRules initNmm(){
 		nmm = new NineMenMorrisRules();
@@ -106,7 +108,7 @@ public class GameboardInfo {
 		case 5:
 			return "Congratulations! RED have won!";
 			default:
-				return "YOU SUCK!";
+				return "";
 		}
 	}
 
